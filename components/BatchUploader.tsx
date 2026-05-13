@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { ApplicationData } from '@/lib/types';
 import { CANONICAL_GOVERNMENT_WARNING } from '@/lib/validation';
 
@@ -27,6 +27,7 @@ const defaultAppData = (): ApplicationData => ({
 });
 
 export default function BatchUploader({ items, onChange }: Props) {
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const handleFiles = useCallback(
     (files: FileList) => {
       const valid = ['image/jpeg', 'image/png', 'image/webp'];
@@ -96,14 +97,35 @@ export default function BatchUploader({ items, onChange }: Props) {
         </div>
       </div>
 
-      {items.map((item, idx) => (
+      {items.map((item, idx) => {
+        const isExpanded = expandedId === item.id;
+        return (
         <div key={item.id} className="border border-gray-200 rounded-xl overflow-hidden">
           <div className="flex items-center gap-3 p-3 bg-gray-50 border-b border-gray-200">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={item.preview} alt={`Label ${idx + 1}`} className="w-16 h-16 object-contain rounded border bg-white" />
+            <button
+              type="button"
+              onClick={() => setExpandedId(isExpanded ? null : item.id)}
+              aria-label={isExpanded ? 'Collapse label image' : 'View full label image'}
+              className="relative flex-shrink-0 group"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={item.preview} alt={`Label ${idx + 1}`} className="w-16 h-16 object-contain rounded border bg-white" />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 rounded transition-colors flex items-center justify-center">
+                <svg className="w-5 h-5 text-white opacity-0 group-hover:opacity-100 drop-shadow transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                </svg>
+              </div>
+            </button>
             <div className="flex-1">
               <p className="text-sm font-medium text-gray-800">Label {idx + 1}</p>
               <p className="text-xs text-gray-500">{item.file.name}</p>
+              <button
+                type="button"
+                onClick={() => setExpandedId(isExpanded ? null : item.id)}
+                className="text-xs text-blue-600 hover:text-blue-800 mt-0.5"
+              >
+                {isExpanded ? 'Hide label' : 'View label'}
+              </button>
             </div>
             <button
               type="button"
@@ -114,6 +136,18 @@ export default function BatchUploader({ items, onChange }: Props) {
               Remove
             </button>
           </div>
+
+          {/* Full label preview */}
+          {isExpanded && (
+            <div className="bg-gray-100 flex justify-center p-4 border-b border-gray-200">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={item.preview}
+                alt={`Full label ${idx + 1}`}
+                className="max-h-80 max-w-full object-contain rounded-lg shadow"
+              />
+            </div>
+          )}
           <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
             {([
               ['brandName', 'Brand Name', true],
@@ -150,7 +184,8 @@ export default function BatchUploader({ items, onChange }: Props) {
             </div>
           </div>
         </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
