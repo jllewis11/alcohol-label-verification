@@ -4,7 +4,7 @@ An AI-powered alcohol label compliance verification tool for TTB compliance agen
 
 ## Live Demo
 
-_Add Vercel deployment URL here._
+**https://ttb-label-verification-pink.vercel.app**
 
 Access is password-protected. Contact the project owner for the access code.
 
