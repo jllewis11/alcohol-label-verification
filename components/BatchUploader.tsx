@@ -200,17 +200,14 @@ export default function BatchUploader({ items, onChange }: Props) {
                   />
                 </div>
               ))}
-              <div className="sm:col-span-2 flex flex-col gap-1">
-                <label className="text-xs font-medium text-gray-600">
-                  Government Warning <span className="text-red-500">*</span>
-                  <span className="ml-1 text-amber-600 font-normal">(exact match required)</span>
-                </label>
-                <textarea
-                  value={item.applicationData.governmentWarning}
-                  onChange={(e) => updateField(item.id, 'governmentWarning', e.target.value)}
-                  rows={3}
-                  className="border border-gray-300 rounded-lg px-2 py-1.5 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                />
+              <div className="sm:col-span-2 flex items-center gap-2 px-2 py-2 rounded-md"
+                style={{ background: 'var(--green-bg)', border: '1px solid var(--green-border)' }}>
+                <svg style={{ width: 13, height: 13, color: 'var(--green)', flexShrink: 0 }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.07em', color: 'var(--green)', fontWeight: 600 }}>
+                  CANONICAL TTB WARNING LOCKED — exact match enforced automatically
+                </p>
               </div>
             </div>
           </div>

@@ -1,7 +1,6 @@
 'use client';
 
 import { ApplicationData } from '@/lib/types';
-import { CANONICAL_GOVERNMENT_WARNING } from '@/lib/validation';
 
 interface ApplicationFormProps {
   data: ApplicationData;
@@ -49,52 +48,26 @@ export default function ApplicationForm({ data, onChange }: ApplicationFormProps
         </div>
       ))}
 
-      <div className="flex flex-col gap-1.5">
-        <div className="flex items-center justify-between">
-          <label htmlFor="governmentWarning" className="field-label flex items-center gap-1">
-            Government Warning
-            <span style={{ color: 'var(--red)', marginLeft: 2 }}>*</span>
-          </label>
-          <span style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '0.58rem',
-            letterSpacing: '0.06em',
-            color: 'var(--amber)',
-            background: 'var(--amber-bg)',
-            border: '1px solid var(--amber-border)',
-            padding: '1px 6px',
-            borderRadius: 3,
-          }}>EXACT MATCH</span>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        padding: '8px 12px',
+        borderRadius: 6,
+        background: 'var(--green-bg)',
+        border: '1px solid var(--green-border)',
+      }}>
+        <svg style={{ width: 14, height: 14, color: 'var(--green)', flexShrink: 0 }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+        <div>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.08em', color: 'var(--green)', fontWeight: 600 }}>
+            CANONICAL TTB WARNING LOCKED
+          </p>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--green)', opacity: 0.75, marginTop: 1 }}>
+            Exact match enforced automatically
+          </p>
         </div>
-        <textarea
-          id="governmentWarning"
-          value={data.governmentWarning}
-          onChange={(e) => handleChange('governmentWarning', e.target.value)}
-          rows={4}
-          required
-          className="w-full px-3 py-2 resize-none"
-          style={{ fontSize: '0.75rem', lineHeight: 1.6 }}
-        />
-        <button
-          type="button"
-          onClick={() => handleChange('governmentWarning', CANONICAL_GOVERNMENT_WARNING)}
-          style={{
-            alignSelf: 'flex-start',
-            fontFamily: 'var(--font-mono)',
-            fontSize: '0.62rem',
-            letterSpacing: '0.06em',
-            color: 'var(--navy)',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 0,
-            textDecoration: 'underline',
-            textDecorationStyle: 'dotted',
-            marginTop: 2,
-          }}
-        >
-          Reset to canonical TTB text
-        </button>
       </div>
     </div>
   );
