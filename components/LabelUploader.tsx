@@ -47,7 +47,7 @@ export default function LabelUploader({ onImageSelected, selectedFile }: LabelUp
           padding: 20,
           textAlign: 'center',
           cursor: 'pointer',
-          background: dragOver ? 'rgba(15,39,68,0.04)' : 'var(--cream)',
+          background: dragOver ? 'rgba(15,39,68,0.04)' : '#f8f9fa',
           transition: 'border-color 0.15s, background 0.15s',
         }}
       >

@@ -32,13 +32,9 @@
 * { box-sizing: border-box; }
 
 body {
-  background-color: var(--cream);
+  background-color: #eef0f3;
   color: var(--ink);
   font-family: var(--font-body), system-ui, sans-serif;
-  background-image:
-    linear-gradient(rgba(15, 39, 68, 0.028) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(15, 39, 68, 0.028) 1px, transparent 1px);
-  background-size: 32px 32px;
 }
 
 /* Typography */
@@ -89,7 +85,7 @@ select {
   font-family: var(--font-mono), monospace;
   font-size: 0.8125rem;
   color: var(--ink);
-  background: var(--cream);
+  background: #ffffff;
   border: 1px solid var(--border);
   border-radius: 6px;
   transition: border-color 0.15s, box-shadow 0.15s;
@@ -99,7 +95,7 @@ input[type="text"]:focus,
 input[type="password"]:focus,
 textarea:focus {
   border-color: var(--navy);
-  background: white;
+  background: #ffffff;
   box-shadow: 0 0 0 3px rgba(15,39,68,0.08);
 }
 input::placeholder, textarea::placeholder {
