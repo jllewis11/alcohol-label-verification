@@ -47,6 +47,7 @@ export default function TestBatch() {
   const [elapsed, setElapsed] = useState(0);
   const [totalTime, setTotalTime] = useState<number | null>(null);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const [totalCount, setTotalCount] = useState(5);
   const [batchSize, setBatchSize] = useState(20);
   const startRef = useRef<number>(0);
@@ -347,18 +348,81 @@ export default function TestBatch() {
               style={{ gridTemplateColumns: `repeat(${Math.min(results.length, 20)}, minmax(0, 1fr))` }}
             >
               {results.map((r, i) => (
-                <div
+                <button
                   key={i}
-                  className={`w-full aspect-square rounded-sm cursor-pointer transition-all hover:scale-110 hover:z-10 relative
-                    ${statusColors[r.status]}
-                    ${r.matched === false ? 'ring-2 ring-white ring-offset-1 ring-offset-orange-400' : ''}
-                  `}
+                  type="button"
+                  onClick={() => setSelectedId(selectedId === i ? null : i)}
                   onMouseEnter={() => setHoveredId(i)}
                   onMouseLeave={() => setHoveredId(null)}
                   title={`#${i + 1} ${r.label.scenarioName}`}
+                  className={`w-full aspect-square rounded-sm transition-all hover:scale-110 hover:z-10 relative
+                    ${statusColors[r.status]}
+                    ${r.matched === false ? 'ring-2 ring-white ring-offset-1 ring-offset-orange-400' : ''}
+                    ${selectedId === i ? 'ring-2 ring-blue-300 ring-offset-1 scale-110 z-10' : ''}
+                  `}
                 />
               ))}
             </div>
+
+            {/* Selected cell expanded view */}
+            {selectedId !== null && results[selectedId] && (() => {
+              const sel = results[selectedId];
+              return (
+                <div className="border border-gray-200 rounded-xl overflow-hidden mt-1">
+                  <div className="flex items-center justify-between px-3 py-2 bg-gray-50 border-b border-gray-100">
+                    <span className="text-xs font-semibold text-gray-700">
+                      #{sel.label.id + 1} — {sel.label.scenarioName}
+                    </span>
+                    <button type="button" onClick={() => setSelectedId(null)}
+                      className="text-gray-400 hover:text-gray-600 text-lg leading-none">×</button>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2">
+                    {/* Label image */}
+                    <div className="bg-gray-50 flex items-center justify-center p-4 border-b sm:border-b-0 sm:border-r border-gray-100">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={`data:image/jpeg;base64,${sel.label.imageBase64}`}
+                        alt="Generated label"
+                        className="max-h-64 max-w-full object-contain rounded-lg shadow"
+                      />
+                    </div>
+                    {/* Details */}
+                    <div className="p-3 flex flex-col gap-2 text-xs max-h-64 overflow-y-auto">
+                      <div className="flex gap-2 flex-wrap">
+                        {sel.actualStatus && (
+                          <span className={`font-semibold px-2 py-0.5 rounded-full
+                            ${sel.actualStatus === 'approved' ? 'bg-green-100 text-green-700' :
+                              sel.actualStatus === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                            {sel.actualStatus.replace('_', ' ').toUpperCase()}
+                          </span>
+                        )}
+                        {sel.status === 'running' && <span className="text-blue-600">Processing...</span>}
+                        {sel.status === 'idle' && <span className="text-gray-400">Queued</span>}
+                        <span className="text-gray-400">Expected: {sel.label.expectedStatus}</span>
+                        {sel.result?.processingTimeMs && (
+                          <span className="text-gray-400">{sel.result.processingTimeMs}ms</span>
+                        )}
+                      </div>
+                      {sel.result?.fields.map((f) => (
+                        <div key={f.field} className={`flex items-start gap-1.5 rounded px-2 py-1.5
+                          ${f.status === 'pass' ? 'bg-green-50' : f.status === 'fail' ? 'bg-red-50' : f.status === 'warning' ? 'bg-yellow-50' : 'bg-gray-50'}`}>
+                          <span className={`font-bold flex-shrink-0
+                            ${f.status === 'pass' ? 'text-green-600' : f.status === 'fail' ? 'text-red-600' : f.status === 'warning' ? 'text-yellow-600' : 'text-gray-400'}`}>
+                            {f.status === 'pass' ? '✓' : f.status === 'fail' ? '✗' : f.status === 'warning' ? '⚠' : '?'}
+                          </span>
+                          <div className="min-w-0">
+                            <span className="font-semibold text-gray-700">{f.field}</span>
+                            {f.labelValue && <span className="text-gray-500 ml-1">— {f.labelValue}</span>}
+                            {f.note && <p className="text-gray-500 italic mt-0.5">{f.note}</p>}
+                          </div>
+                        </div>
+                      ))}
+                      {sel.error && <p className="text-red-600">Error: {sel.error}</p>}
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Tooltip */}
             {hovered && (
