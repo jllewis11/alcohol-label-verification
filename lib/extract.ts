@@ -6,34 +6,11 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const EXTRACT_PROMPT = `
-You are reading an alcohol beverage label. Extract the following fields exactly as they appear on the label and return them as JSON.
+const EXTRACT_PROMPT = `Extract alcohol label fields exactly as shown. Return ONLY valid JSON, no markdown.
 
-FIELDS TO EXTRACT:
-- brandName: the brand or product name
-- classType: the class/type designation (e.g. "Scotch Whisky", "American Bourbon Whiskey", "Cabernet Sauvignon")
-- alcoholContent: alcohol by volume as shown (e.g. "40% Alc./Vol.", "45% alc/vol (90 Proof)")
-- netContents: bottle volume as shown (e.g. "750 mL", "1 L")
-- bottlerInfo: bottler, distiller, or producer name and address as shown
-- countryOfOrigin: country of origin if shown, otherwise empty string
-- governmentWarning: the full Government Warning text exactly as it appears, including the "GOVERNMENT WARNING:" header
+{"brandName":"","classType":"","alcoholContent":"","netContents":"","bottlerInfo":"","countryOfOrigin":"","governmentWarning":""}
 
-RULES:
-- Copy text exactly as it appears — do not paraphrase or correct
-- If a field is not visible or the image is too blurry to read, use an empty string
-- Return only valid JSON, no markdown, no explanation
-
-RESPONSE FORMAT:
-{
-  "brandName": "",
-  "classType": "",
-  "alcoholContent": "",
-  "netContents": "",
-  "bottlerInfo": "",
-  "countryOfOrigin": "",
-  "governmentWarning": ""
-}
-`;
+Copy text verbatim. Use empty string if a field is missing or unreadable.`;
 
 export async function extractLabel(
   imageBase64: string,
@@ -46,7 +23,7 @@ export async function extractLabel(
 
   const response = await openai.chat.completions.create({
     model: 'gpt-4o',
-    max_tokens: 1024,
+    max_tokens: 256,
     messages: [
       { role: 'system', content: EXTRACT_PROMPT },
       {
@@ -54,7 +31,7 @@ export async function extractLabel(
         content: [
           {
             type: 'image_url',
-            image_url: { url: `data:${mimeType};base64,${imageBase64}` },
+            image_url: { url: `data:${mimeType};base64,${imageBase64}`, detail: 'low' },
           },
           {
             type: 'text',
