@@ -17,7 +17,7 @@ interface TestResult {
 
 type RunState = 'idle' | 'generating' | 'running' | 'done';
 
-const TOTAL_PRESETS = [20, 50, 100, 200, 500];
+const TOTAL_PRESETS = [5, 10, 20, 100];
 const BATCH_SIZE_OPTIONS = [5, 10, 20, 50, 100];
 
 function chunk<T>(arr: T[], size: number): T[][] {
@@ -47,7 +47,7 @@ export default function TestBatch() {
   const [elapsed, setElapsed] = useState(0);
   const [totalTime, setTotalTime] = useState<number | null>(null);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
-  const [totalCount, setTotalCount] = useState(100);
+  const [totalCount, setTotalCount] = useState(20);
   const [batchSize, setBatchSize] = useState(20);
   const startRef = useRef<number>(0);
 
