@@ -66,12 +66,7 @@ export default function BatchProgress({ items }: Props) {
               className={`border rounded-xl overflow-hidden bg-white transition-all ${borderClass}`}
             >
               {/* Row */}
-              <button
-                type="button"
-                onClick={() => setExpandedId(isExpanded ? null : item.id)}
-                className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 transition-colors text-left"
-                aria-expanded={isExpanded}
-              >
+              <div className="flex items-center gap-3 p-3">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={item.preview}
@@ -105,14 +100,18 @@ export default function BatchProgress({ items }: Props) {
                   )}
                 </div>
                 {item.status === 'done' && (
-                  <svg
-                    className={`w-4 h-4 text-gray-400 flex-shrink-0 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-                    fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                  <button
+                    type="button"
+                    onClick={() => setExpandedId(isExpanded ? null : item.id)}
+                    className="flex-shrink-0 flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                    </svg>
+                    {isExpanded ? 'Hide' : 'View Label'}
+                  </button>
                 )}
-              </button>
+              </div>
 
               {/* Expanded view */}
               {isExpanded && item.result && (

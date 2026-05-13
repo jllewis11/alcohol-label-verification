@@ -102,31 +102,22 @@ export default function BatchUploader({ items, onChange }: Props) {
         return (
         <div key={item.id} className="border border-gray-200 rounded-xl overflow-hidden">
           <div className="flex items-center gap-3 p-3 bg-gray-50 border-b border-gray-200">
-            <button
-              type="button"
-              onClick={() => setExpandedId(isExpanded ? null : item.id)}
-              aria-label={isExpanded ? 'Collapse label image' : 'View full label image'}
-              className="relative flex-shrink-0 group"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={item.preview} alt={`Label ${idx + 1}`} className="w-16 h-16 object-contain rounded border bg-white" />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 rounded transition-colors flex items-center justify-center">
-                <svg className="w-5 h-5 text-white opacity-0 group-hover:opacity-100 drop-shadow transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                </svg>
-              </div>
-            </button>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={item.preview} alt={`Label ${idx + 1}`} className="w-16 h-16 object-contain rounded border bg-white flex-shrink-0" />
             <div className="flex-1">
               <p className="text-sm font-medium text-gray-800">Label {idx + 1}</p>
               <p className="text-xs text-gray-500">{item.file.name}</p>
-              <button
-                type="button"
-                onClick={() => setExpandedId(isExpanded ? null : item.id)}
-                className="text-xs text-blue-600 hover:text-blue-800 mt-0.5"
-              >
-                {isExpanded ? 'Hide label' : 'View label'}
-              </button>
             </div>
+            <button
+              type="button"
+              onClick={() => setExpandedId(isExpanded ? null : item.id)}
+              className="flex-shrink-0 flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100 transition-colors"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+              </svg>
+              {isExpanded ? 'Hide' : 'View Label'}
+            </button>
             <button
               type="button"
               onClick={() => removeItem(item.id)}
