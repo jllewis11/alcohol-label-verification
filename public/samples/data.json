@@ -1,0 +1,101 @@
+{
+  "01_stones_throw_pass.jpg": {
+    "brandName": "STONE'S THROW",
+    "classType": "Kentucky Straight Bourbon Whiskey",
+    "alcoholContent": "45% Alc./Vol. (90 Proof)",
+    "netContents": "750 mL",
+    "bottlerInfo": "Bottled by Stone's Throw Distillery, Louisville, KY 40202",
+    "countryOfOrigin": "USA",
+    "governmentWarning": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems."
+  },
+  "02_blue_ridge_pass.jpg": {
+    "brandName": "BLUE RIDGE",
+    "classType": "Tennessee Whiskey",
+    "alcoholContent": "40% Alc./Vol. (80 Proof)",
+    "netContents": "750 mL",
+    "bottlerInfo": "Bottled by Blue Ridge Spirits Co., Nashville, TN 37201",
+    "countryOfOrigin": "USA",
+    "governmentWarning": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems."
+  },
+  "03_highland_mist_pass.jpg": {
+    "brandName": "HIGHLAND MIST",
+    "classType": "Blended Scotch Whisky",
+    "alcoholContent": "43% Alc./Vol. (86 Proof)",
+    "netContents": "750 mL",
+    "bottlerInfo": "Imported by Highland Mist USA LLC, New York, NY 10001",
+    "countryOfOrigin": "Scotland",
+    "governmentWarning": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems."
+  },
+  "04_casa_real_pass.jpg": {
+    "brandName": "CASA REAL",
+    "classType": "Tequila Blanco",
+    "alcoholContent": "38% Alc./Vol. (76 Proof)",
+    "netContents": "750 mL",
+    "bottlerInfo": "Imported by Casa Real Imports, San Antonio, TX 78205",
+    "countryOfOrigin": "Mexico",
+    "governmentWarning": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems."
+  },
+  "05_silver_peak_pass.jpg": {
+    "brandName": "SILVER PEAK",
+    "classType": "American Gin",
+    "alcoholContent": "47% Alc./Vol. (94 Proof)",
+    "netContents": "750 mL",
+    "bottlerInfo": "Bottled by Silver Peak Craft Distillery, Denver, CO 80202",
+    "countryOfOrigin": "USA",
+    "governmentWarning": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems."
+  },
+  "06_missing_warning_fail.jpg": {
+    "brandName": "COPPER STILL",
+    "classType": "Straight Rye Whiskey",
+    "alcoholContent": "50% Alc./Vol. (100 Proof)",
+    "netContents": "750 mL",
+    "bottlerInfo": "Bottled by Copper Still Craft Spirits, Austin, TX 78701",
+    "countryOfOrigin": "USA",
+    "governmentWarning": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems."
+  },
+  "07_title_case_warning_fail.jpg": {
+    "brandName": "IRON GATE",
+    "classType": "Dark Rum",
+    "alcoholContent": "35% Alc./Vol. (70 Proof)",
+    "netContents": "750 mL",
+    "bottlerInfo": "Imported by Iron Gate Beverages Inc., Miami, FL 33101",
+    "countryOfOrigin": "Puerto Rico",
+    "governmentWarning": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems."
+  },
+  "08_truncated_warning_fail.jpg": {
+    "brandName": "HARBOR LIGHT",
+    "classType": "Blended Whiskey",
+    "alcoholContent": "40% Alc./Vol. (80 Proof)",
+    "netContents": "750 mL",
+    "bottlerInfo": "Bottled by Harbor Light Distilling Co., Boston, MA 02101",
+    "countryOfOrigin": "USA",
+    "governmentWarning": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems."
+  },
+  "09_missing_abv_fail.jpg": {
+    "brandName": "MOUNT PLEASANT",
+    "classType": "American Vodka",
+    "alcoholContent": "40% Alc./Vol. (80 Proof)",
+    "netContents": "750 mL",
+    "bottlerInfo": "Bottled by Mount Pleasant Distillers, Portland, OR 97201",
+    "countryOfOrigin": "USA",
+    "governmentWarning": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems."
+  },
+  "10_altered_warning_fail.jpg": {
+    "brandName": "BELLMONT RESERVE",
+    "classType": "Brandy",
+    "alcoholContent": "40% Alc./Vol. (80 Proof)",
+    "netContents": "750 mL",
+    "bottlerInfo": "Bottled by Bellmont Wine & Spirits, Sacramento, CA 95814",
+    "countryOfOrigin": "USA",
+    "governmentWarning": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems."
+  },
+  "10_bellmont_pass.jpg": {
+    "brandName": "BELLMONT",
+    "classType": "Brandy",
+    "alcoholContent": "36% Alc./Vol. (72 Proof)",
+    "netContents": "750 mL",
+    "bottlerInfo": "Bottled by Bellmont Wine & Spirits, Sacramento, CA 95814",
+    "countryOfOrigin": "USA",
+    "governmentWarning": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems."
+  }
+}
