@@ -11,47 +11,45 @@ export default function LabelUploader({ onImageSelected, selectedFile }: LabelUp
   const [dragOver, setDragOver] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
 
-  const handleFile = useCallback(
-    (file: File) => {
-      const valid = ['image/jpeg', 'image/png', 'image/webp'];
-      if (!valid.includes(file.type)) {
-        alert('Please upload a JPG, PNG, or WebP image.');
-        return;
-      }
-      onImageSelected(file);
-      const url = URL.createObjectURL(file);
-      setPreview(url);
-    },
-    [onImageSelected]
-  );
+  const handleFile = useCallback((file: File) => {
+    const valid = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!valid.includes(file.type)) {
+      alert('Please upload a JPG, PNG, or WebP image.');
+      return;
+    }
+    onImageSelected(file);
+    setPreview(URL.createObjectURL(file));
+  }, [onImageSelected]);
 
-  const handleDrop = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault();
-      setDragOver(false);
-      const file = e.dataTransfer.files[0];
-      if (file) handleFile(file);
-    },
-    [handleFile]
-  );
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  }, [handleFile]);
 
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file) handleFile(file);
-    },
-    [handleFile]
-  );
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleFile(file);
+  }, [handleFile]);
 
   return (
     <div className="flex flex-col gap-3">
-      <label className="block text-sm font-semibold text-gray-700">Upload Label Image</label>
+      <label className="field-label">Label Image</label>
       <div
         onDrop={handleDrop}
         onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
         onDragLeave={() => setDragOver(false)}
-        className={`relative border-2 border-dashed rounded-xl p-6 text-center transition-colors cursor-pointer
-          ${dragOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-blue-50'}`}
+        className="relative transition-all"
+        style={{
+          border: `2px dashed ${dragOver ? 'var(--navy)' : 'var(--border)'}`,
+          borderRadius: 6,
+          padding: 20,
+          textAlign: 'center',
+          cursor: 'pointer',
+          background: dragOver ? 'rgba(15,39,68,0.04)' : 'var(--cream)',
+          transition: 'border-color 0.15s, background 0.15s',
+        }}
       >
         <input
           type="file"
@@ -63,19 +61,26 @@ export default function LabelUploader({ onImageSelected, selectedFile }: LabelUp
         {preview && selectedFile ? (
           <div className="flex flex-col items-center gap-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={preview} alt="Label preview" className="max-h-64 max-w-full rounded-lg object-contain shadow" />
-            <span className="text-xs text-gray-500">{selectedFile.name}</span>
-            <span className="text-xs text-blue-600 font-medium">Click or drag to replace</span>
+            <img src={preview} alt="Label preview"
+              className="max-h-56 max-w-full object-contain rounded shadow-sm" />
+            <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--ink-faint)', letterSpacing: '0.04em' }}>
+              {selectedFile.name}
+            </p>
+            <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--navy)', letterSpacing: '0.06em' }}>
+              CLICK OR DRAG TO REPLACE
+            </p>
           </div>
         ) : (
           <div className="flex flex-col items-center gap-3 py-6">
-            <svg className="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg style={{ width: 40, height: 40, color: 'var(--border)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
                 d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             <div>
-              <p className="text-sm font-medium text-gray-700">Drag and drop label image here</p>
-              <p className="text-xs text-gray-500 mt-1">or click to browse — JPG, PNG, WebP accepted</p>
+              <p style={{ fontSize: '0.85rem', color: 'var(--ink-muted)', fontWeight: 500 }}>Drag label image here</p>
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--ink-faint)', letterSpacing: '0.05em', marginTop: 4 }}>
+                OR CLICK TO BROWSE — JPG · PNG · WEBP
+              </p>
             </div>
           </div>
         )}

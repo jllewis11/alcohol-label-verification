@@ -1,26 +1,108 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --navy:       #0f2744;
+  --navy-light: #1a3a5c;
+  --navy-muted: #2c4a6e;
+  --cream:      #faf8f4;
+  --cream-dark: #f0ece4;
+  --ink:        #1a1a2e;
+  --ink-muted:  #4a5568;
+  --ink-faint:  #8896a8;
+  --green:      #1b7a4a;
+  --green-bg:   #edf7f2;
+  --green-border: #a3d9bc;
+  --red:        #b83232;
+  --red-bg:     #fdf0f0;
+  --red-border: #e8a8a8;
+  --amber:      #c47a0a;
+  --amber-bg:   #fef9ec;
+  --amber-border: #f0d080;
+  --border:     #ddd8d0;
+  --border-light: #ede9e2;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--cream);
+  --color-foreground: var(--ink);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+* { box-sizing: border-box; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-body), system-ui, sans-serif;
+  background-image:
+    linear-gradient(rgba(15, 39, 68, 0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 39, 68, 0.028) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Typography */
+.font-display { font-family: var(--font-display), Georgia, serif; }
+.font-mono    { font-family: var(--font-mono), monospace; }
+
+/* Custom scrollbar */
+::-webkit-scrollbar       { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--cream-dark); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-faint); }
+
+/* Card surface */
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(15,39,68,0.06), 0 4px 16px rgba(15,39,68,0.04);
+}
+
+/* Field label style */
+.field-label {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* Fade-in animation */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.35s cubic-bezier(0.16,1,0.3,1) both; }
+
+/* Status badge */
+.badge-approved    { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.badge-rejected    { background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-border); }
+.badge-needs-review { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+
+/* Input base */
+input[type="text"],
+input[type="password"],
+textarea,
+select {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.8125rem;
+  color: var(--ink);
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+}
+input[type="text"]:focus,
+input[type="password"]:focus,
+textarea:focus {
+  border-color: var(--navy);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(15,39,68,0.08);
+}
+input::placeholder, textarea::placeholder {
+  color: var(--ink-faint);
+  font-style: italic;
 }

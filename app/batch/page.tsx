@@ -104,34 +104,56 @@ export default function BatchPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 px-4 py-4">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">TTB Batch Label Verification</h1>
-            <p className="text-xs text-gray-500 mt-0.5">Upload labels — AI extracts fields — review then verify against your application data</p>
+    <div className="min-h-screen flex flex-col">
+      <header style={{ background: 'var(--navy)' }} className="px-6 py-0">
+        <div className="max-w-5xl mx-auto flex items-center justify-between h-16">
+          <div className="flex items-center gap-4">
+            <div style={{ width: 2, height: 32, background: 'rgba(255,255,255,0.25)' }} />
+            <div>
+              <h1 className="font-display text-white leading-none"
+                style={{ fontSize: '1.125rem', fontWeight: 600, letterSpacing: '-0.01em' }}>
+                TTB Batch Verification
+              </h1>
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>
+                ALCOHOL &amp; TOBACCO TAX AND TRADE BUREAU
+              </p>
+            </div>
           </div>
-          <Link href="/" className="text-sm font-semibold px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition-colors">
-            Single Label
+          <Link href="/"
+            className="flex items-center gap-2 text-white transition-all"
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.7rem',
+              letterSpacing: '0.08em',
+              padding: '6px 14px',
+              border: '1px solid rgba(255,255,255,0.2)',
+              borderRadius: 4,
+              background: 'rgba(255,255,255,0.07)',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.14)')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.07)')}
+          >
+            SINGLE LABEL
           </Link>
         </div>
       </header>
 
-      <div className="max-w-5xl mx-auto px-4 py-6">
+      <main className="flex-1 max-w-5xl mx-auto w-full px-4 py-6">
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
 
           {/* Left: batch upload + verify */}
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
             {!results && (
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+              <div className="card p-5">
                 <BatchUploader items={items} onChange={setItems} />
               </div>
             )}
 
             {error && (
-              <div className="bg-red-50 border border-red-300 rounded-xl p-4">
-                <p className="text-sm font-semibold text-red-800">Batch Error</p>
-                <p className="text-sm text-red-700 mt-1">{error}</p>
+              <div className="rounded-lg px-4 py-3 fade-up"
+                style={{ background: 'var(--red-bg)', border: '1px solid var(--red-border)' }}>
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.1em', color: 'var(--red)', fontWeight: 600 }}>ERROR</p>
+                <p style={{ fontSize: '0.85rem', color: 'var(--red)', marginTop: 4 }}>{error}</p>
               </div>
             )}
 
@@ -141,34 +163,44 @@ export default function BatchPage() {
                   type="button"
                   onClick={handleVerifyAll}
                   disabled={!isReady || loading}
-                  className={`w-full py-3 px-6 rounded-xl font-semibold text-base transition-all
-                    ${isReady && !loading
-                      ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm'
-                      : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    }`}
+                  className="w-full py-3 px-6 transition-all"
+                  style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.75rem',
+                    letterSpacing: '0.12em',
+                    fontWeight: 600,
+                    borderRadius: 6,
+                    border: 'none',
+                    background: isReady && !loading ? 'var(--navy)' : 'var(--border)',
+                    color: isReady && !loading ? 'white' : 'var(--ink-faint)',
+                    cursor: isReady && !loading ? 'pointer' : 'not-allowed',
+                    boxShadow: isReady && !loading ? '0 2px 8px rgba(15,39,68,0.25)' : 'none',
+                  }}
                 >
                   {loading
-                    ? `Verifying ${items.length} labels... ${(elapsed / 1000).toFixed(1)}s`
+                    ? `VERIFYING ${items.length} LABELS… ${(elapsed / 1000).toFixed(1)}s`
                     : anyExtracting
-                    ? `Reading labels... (${items.filter((i) => i.extracting).length} remaining)`
-                    : `Verify All (${items.length} label${items.length !== 1 ? 's' : ''})`}
+                    ? `READING… ${items.filter((i) => i.extracting).length} REMAINING`
+                    : `VERIFY ALL — ${items.length} LABEL${items.length !== 1 ? 'S' : ''}`}
                 </button>
                 {items.length === 0 && (
-                  <p className="text-xs text-center text-gray-400">Upload images above to begin</p>
+                  <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--ink-faint)', textAlign: 'center', letterSpacing: '0.06em' }}>
+                    Upload images above to begin
+                  </p>
                 )}
               </div>
             )}
 
             {results && (
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+              <div className="card p-5">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Batch Results</h2>
+                  <p className="field-label">Batch Results</p>
                   <button
                     type="button"
                     onClick={() => { setResults(null); setItems([]); setError(null); }}
-                    className="text-sm text-blue-600 hover:text-blue-800 underline"
+                    style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--navy)', letterSpacing: '0.06em', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', textDecorationStyle: 'dotted' }}
                   >
-                    Start New Batch
+                    NEW BATCH
                   </button>
                 </div>
                 <BatchProgress items={results} />
@@ -182,7 +214,7 @@ export default function BatchPage() {
           </div>
 
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }
