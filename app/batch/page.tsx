@@ -21,12 +21,7 @@ export default function BatchPage() {
     return () => clearInterval(interval);
   }, [loading]);
 
-  const anyExtracting = items.some((item) => item.extracting);
-  const isReady = items.length > 0 && !anyExtracting && items.every((item) => {
-    const d = item.applicationData;
-    return d.brandName.trim() && d.classType.trim() && d.alcoholContent.trim() &&
-      d.netContents.trim() && d.bottlerInfo.trim() && d.governmentWarning.trim();
-  });
+  const isReady = items.length > 0 && !loading;
 
   const handleVerifyAll = async () => {
     if (!isReady) return;
@@ -42,66 +37,40 @@ export default function BatchPage() {
     setResults(initialResults);
 
     try {
-      const batchItems = await Promise.all(
+      // Scan all items concurrently via /api/scan
+      await Promise.allSettled(
         items.map(async (item) => {
-          const bytes = await item.file.arrayBuffer();
-          const base64 = Buffer.from(bytes).toString('base64');
-          return {
-            imageBase64: base64,
-            mimeType: item.file.type,
-            applicationData: item.applicationData,
-          };
-        })
-      );
-
-      const fd = new FormData();
-      fd.append('items', JSON.stringify(batchItems));
-
-      const res = await fetch('/api/verify-batch', { method: 'POST', body: fd });
-      if (!res.ok || !res.body) {
-        const json = await res.json().catch(() => ({}));
-        setError(json.error ?? 'Batch verification failed. Please try again.');
-        setLoading(false);
-        return;
-      }
-
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() ?? '';
-
-        for (const line of lines) {
-          if (!line.trim()) continue;
+          const fd = new FormData();
+          fd.append('image', item.file);
           try {
-            const parsed: { index: number; result: VerificationResult | null; error: string | null } = JSON.parse(line);
+            const res = await fetch('/api/scan', { method: 'POST', body: fd });
+            const json = await res.json();
             setResults((prev) => {
               if (!prev) return prev;
               const next = [...prev];
-              const item = items[parsed.index];
-              if (!item) return next;
               const idx = next.findIndex((r) => r.id === item.id);
               if (idx === -1) return next;
               next[idx] = {
                 ...next[idx],
                 status: 'done',
-                result: parsed.result ?? undefined,
-                error: parsed.error ?? undefined,
+                result: res.ok ? (json as VerificationResult) : undefined,
+                error: res.ok ? undefined : (json.error ?? 'Scan failed'),
               };
               return next;
             });
           } catch {
-            // skip malformed lines
+            setResults((prev) => {
+              if (!prev) return prev;
+              const next = [...prev];
+              const idx = next.findIndex((r) => r.id === item.id);
+              if (idx !== -1) next[idx] = { ...next[idx], status: 'done', error: 'Network error' };
+              return next;
+            });
           }
-        }
-      }
+        })
+      );
     } catch {
-      setError('Network error. Please check your connection and try again.');
+      setError('Batch scan failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -151,10 +120,8 @@ export default function BatchPage() {
                 }`}
             >
               {loading
-                ? `Verifying ${items.length} labels... ${(elapsed / 1000).toFixed(1)}s`
-                : anyExtracting
-                ? `Reading labels... (${items.filter(i => i.extracting).length} remaining)`
-                : `Verify All (${items.length} label${items.length !== 1 ? 's' : ''})`}
+                ? `Scanning ${items.length} labels... ${(elapsed / 1000).toFixed(1)}s`
+                : `Scan All (${items.length} label${items.length !== 1 ? 's' : ''})`}
             </button>
             {items.length === 0 && (
               <p className="text-xs text-center text-gray-400">Upload images above to begin</p>
