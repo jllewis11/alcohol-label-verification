@@ -20,7 +20,14 @@ REQUIRED FIELDS — check each is present and readable:
 GOVERNMENT WARNING — EXACT compliance check:
 The label MUST contain this exact text, word-for-word:
 "${CANONICAL_GOVERNMENT_WARNING}"
-Rules: "GOVERNMENT WARNING:" must be ALL CAPS. Any deviation in wording, capitalization of the header, truncation, or missing words = FAIL.
+
+Apply ALL of the following checks and FAIL if any are violated:
+1. Header must be "GOVERNMENT WARNING:" in ALL CAPS — "Government Warning:" or any variation = FAIL
+2. Text must be word-for-word identical to the required statement above — any altered, added, or missing words = FAIL
+3. Both sentences must be fully present — truncating after sentence (1) = FAIL
+4. Warning must not be in illegibly small print — if text is too small to read clearly, set status "unreadable"
+5. "GOVERNMENT WARNING:" header should appear bold/prominent — if clearly not distinguishable, add a note
+6. Common violations: title-case header, missing second sentence, changed wording (e.g. "affects" vs "impairs"), no header at all
 
 RETURN only valid JSON:
 {

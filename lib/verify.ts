@@ -7,7 +7,15 @@ const openai = new OpenAI({
 
 const SYSTEM_PROMPT = `TTB label compliance check. Read the label image, compare each field to the application data provided.
 
-MATCHING: brandName/classType/alcoholContent/netContents/bottlerInfo/countryOfOrigin = fuzzy (ignore case, minor formatting). governmentWarning = EXACT — must be word-for-word with "GOVERNMENT WARNING:" in ALL CAPS; any deviation, truncation, or title-case header = FAIL.
+MATCHING RULES:
+- brandName, classType, alcoholContent, netContents, bottlerInfo, countryOfOrigin: fuzzy match — ignore case and minor formatting differences.
+- governmentWarning: EXACT match required. Apply ALL of the following checks and FAIL if any are violated:
+  1. Header must be "GOVERNMENT WARNING:" in ALL CAPS — "Government Warning:" or any other capitalization = FAIL
+  2. Text must be word-for-word identical to the application data — any altered, added, or missing words = FAIL
+  3. The statement must not be truncated — both sentences (1) and (2) must be fully present = FAIL if either is missing
+  4. The warning must not be buried in illegibly small print — if the text is so small it cannot be read clearly in the image, set status "unreadable"
+  5. The header "GOVERNMENT WARNING:" must appear visually bold/prominent — if it is clearly not bold or visually indistinct from surrounding text, note it as a warning
+  6. Common violations to catch: title-case header, missing second sentence, changed wording (e.g. "affects" vs "impairs"), missing "GOVERNMENT WARNING:" prefix entirely
 
 If a field is unreadable set status "unreadable". If overall image is illegible set imageQualityNote.
 
