@@ -21,7 +21,8 @@ export default function BatchPage() {
     return () => clearInterval(interval);
   }, [loading]);
 
-  const isReady = items.length > 0 && items.every((item) => {
+  const anyExtracting = items.some((item) => item.extracting);
+  const isReady = items.length > 0 && !anyExtracting && items.every((item) => {
     const d = item.applicationData;
     return d.brandName.trim() && d.classType.trim() && d.alcoholContent.trim() &&
       d.netContents.trim() && d.bottlerInfo.trim() && d.governmentWarning.trim();
@@ -151,6 +152,8 @@ export default function BatchPage() {
             >
               {loading
                 ? `Verifying ${items.length} labels... ${(elapsed / 1000).toFixed(1)}s`
+                : anyExtracting
+                ? `Reading labels... (${items.filter(i => i.extracting).length} remaining)`
                 : `Verify All (${items.length} label${items.length !== 1 ? 's' : ''})`}
             </button>
             {items.length === 0 && (

@@ -181,7 +181,7 @@ export default function Home() {
               </div>
               <div className="p-5">
                 {tab === 'upload' ? (
-                  <LabelUploader onImageSelected={setImage} selectedFile={image} />
+                  <LabelUploader onImageSelected={handleCapture} selectedFile={image} />
                 ) : (
                   <CameraCapture onCapture={handleCapture} />
                 )}
