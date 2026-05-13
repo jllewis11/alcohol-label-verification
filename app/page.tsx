@@ -127,17 +127,6 @@ export default function Home() {
       </header>
 
       <div className="max-w-6xl mx-auto px-4 py-6">
-        {/* Firewall notice — only relevant if running locally on agency network */}
-        <div className="mb-4 flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-xs text-amber-800">
-          <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <span>
-            <strong>Agency network users:</strong> If verification fails to connect, your network firewall may be blocking the AI service.
-            Use the <strong>deployed web URL</strong> instead of running locally — it routes through Vercel and bypasses agency firewall restrictions.
-          </span>
-        </div>
-
         {/* Step guide */}
         <div className="flex gap-2 mb-4 flex-wrap">
           {[
