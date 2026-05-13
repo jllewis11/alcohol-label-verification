@@ -47,7 +47,7 @@ export default function TestBatch() {
   const [elapsed, setElapsed] = useState(0);
   const [totalTime, setTotalTime] = useState<number | null>(null);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
-  const [totalCount, setTotalCount] = useState(20);
+  const [totalCount, setTotalCount] = useState(5);
   const [batchSize, setBatchSize] = useState(20);
   const startRef = useRef<number>(0);
 
