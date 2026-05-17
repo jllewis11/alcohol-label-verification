@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { verifyLabel } from '@/lib/verify';
 import { ApplicationData, VerificationResult } from '@/lib/types';
+import { checkRateLimit } from '@/lib/rateLimit';
 
 export const maxDuration = 60;
 
@@ -11,6 +12,30 @@ interface BatchItem {
 }
 
 export async function POST(request: NextRequest) {
+  const ip =
+    request.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
+    request.headers.get('x-real-ip') ??
+    'unknown';
+
+  const rl = checkRateLimit(ip);
+  if (!rl.allowed) {
+    return new Response(
+      JSON.stringify({
+        error: 'Rate limit exceeded. Try again later.',
+        resetAt: rl.resetAt,
+      }),
+      {
+        status: 429,
+        headers: {
+          'Content-Type': 'application/json',
+          'Retry-After': String(Math.ceil((rl.resetAt - Date.now()) / 1000)),
+          'X-RateLimit-Remaining': '0',
+          'X-RateLimit-Reset': String(rl.resetAt),
+        },
+      }
+    );
+  }
+
   let formData: FormData;
   try {
     formData = await request.formData();
