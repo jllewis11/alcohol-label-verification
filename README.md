@@ -68,53 +68,65 @@ npm test
 
 ## Approach
 
-### Why GPT-4o
+### Problem framing
 
-GPT-4o's vision capability handles the core task — reading a label image and comparing fields — in a single API call. The prior vendor's scanning approach (30–40 seconds per label) failed adoption. GPT-4o consistently returns results in 3–5 seconds.
+The core task is: given a label image and a set of application data fields, determine whether each field on the physical label matches what was approved. The prior vendor solved this with template-based OCR (30–40 seconds per label, high failure rate on non-standard layouts). The goal was to get this under 5 seconds with acceptable accuracy for a human-reviewed workflow.
 
-A single model call per label was chosen deliberately over multi-pass approaches (e.g., extract then verify) to stay within the 5-second target. The accuracy tradeoff is acceptable for a prototype where a human agent reviews every result.
+### Architecture
 
-### Matching Logic
+The system is a Next.js API layer in front of GPT-4o. Each verification is a single POST to `/api/verify` — the image (base64) and application data are sent together, and the model returns a structured JSON result with a pass/fail/warning/unreadable status for each field. No intermediate storage; no pipeline. This keeps the critical path to one network round-trip.
 
-Most fields use **fuzzy matching** — GPT-4o is instructed to accept minor formatting differences like `750ml` vs `750 mL`, or `alc/vol` vs `Alc./Vol.`. This addresses the real agent concern (Dave Morrison's example: `STONE'S THROW` vs `Stone's Throw` should pass) while still catching genuine errors.
+Batch verification (`/api/verify-batch`) fans out requests concurrently using `Promise.allSettled` and streams results back as NDJSON. Clients see each label resolve in real time rather than waiting for the slowest one. One failure does not block others.
 
-The **Government Warning Statement** uses exact matching. Per TTB regulation and agent feedback (Jenny Park), the statement must be word-for-word with `GOVERNMENT WARNING:` in ALL CAPS. Any deviation — title case, truncation, altered wording, or the header buried in small print — is a hard fail. The canonical warning is pre-filled in the form so agents never have to type it.
+Camera auto-fill is a separate `/api/extract` call before verification. The agent photographs the bottle, the model reads all seven fields from the image, and the form pre-populates. The agent reviews and corrects before submitting — eliminating manual data entry without removing human oversight.
 
-### Camera Auto-Fill
+### Matching logic
 
-When an agent photographs a bottle, a separate `/api/extract` call runs first — GPT-4o reads the label and populates all application data fields automatically. The agent reviews the auto-filled fields before triggering verification. This eliminates the data-entry step that currently consumes much of agents' time.
+Most fields use **fuzzy matching**: GPT-4o is instructed to accept minor formatting differences (`750ml` vs `750 mL`, `alc/vol` vs `Alc./Vol.`, `Stone's Throw` vs `STONE'S THROW`). This reflects how agents actually evaluate labels — a formatting difference is not a compliance failure.
 
-### Degraded Images
+The **Government Warning Statement** is exact-match only. TTB requires the statement word-for-word with `GOVERNMENT WARNING:` in ALL CAPS, bold, and no less prominent than other text. Any deviation — title case, truncation, altered wording, buried placement — is a genuine compliance failure, not a formatting difference. The canonical text is pre-filled in every form so agents never have to type it.
 
-If GPT-4o cannot read a field (blur, glare, angle, small print), it returns `"unreadable"` status rather than guessing. The overall status becomes `needs_review` rather than a false pass or crash. Agents see which specific fields were unreadable and can request a clearer image.
+### Degraded images
+
+If GPT-4o cannot read a field (blur, glare, angle, small print), it returns `"unreadable"` for that field rather than guessing. The overall status becomes `needs_review`. Agents see exactly which fields were unreadable. This avoids false passes on low-quality images.
+
+---
+
+## Tools Used
+
+| Tool | Why this, not something else |
+|---|---|
+| **GPT-4o (vision)** | Handles arbitrary label layouts, fonts, and image quality in a single API call. Template-based OCR requires per-label training and breaks on layout variation. Dedicated document AI services (Textract, Document AI) extract text but don't compare it to a reference — a second model call would still be needed, doubling latency. |
+| **Next.js 16 (App Router)** | Unified framework for API routes and React UI. Server components and route handlers eliminate a separate backend service. App Router's streaming support enables NDJSON batch progress without WebSockets. |
+| **TypeScript** | End-to-end type safety across API contracts, model response parsing, and UI state. Catches shape mismatches between what the model returns and what the UI expects at compile time. |
+| **Tailwind CSS** | Utility-first styling with no build step complexity. Sufficient for a prototype-grade UI that needs to look professional but doesn't require a design system. |
+| **Vercel** | Zero-config deployment for Next.js. Routes requests through Vercel's infrastructure, bypassing agency firewall restrictions that blocked the prior vendor's local-install approach. Serverless functions handle variable load without capacity planning. |
+| **Vitest** | Fast unit test runner compatible with TypeScript and ESM. Tests cover validation logic and verification result parsing — the parts most likely to break silently on edge cases. |
+
+---
+
+## Assumptions
+
+These are decisions made based on the available context that would need revisiting in a production system:
+
+- **Human review is always required.** The system outputs approved / rejected / needs\_review, but every result is intended to be reviewed by a TTB agent before action is taken. The model's accuracy is high enough for triage, not for autonomous approval.
+- **Images are submitted one label at a time.** Multi-label bottles (front + back) are handled by separate uploads. The model reads whatever is in the frame.
+- **Application data is known before verification.** The workflow assumes an agent has the approved application data and is checking whether a physical label matches it. The system does not retrieve application data from COLA or any external source.
+- **Seven fields cover the required compliance check.** The verified fields are: brand name, class/type, alcohol content, net contents, bottler information, country of origin, and government warning. Additional TTB-required elements (lot number, certificate of label approval number, etc.) are out of scope for this prototype.
+- **A shared password is an acceptable auth model for a pilot.** A small known set of TTB agents will access the tool. Production deployment would require agency SSO or PIV-card authentication.
+- **Latency target is 5 seconds per label.** This was the stated requirement and the primary design constraint. All architectural choices (single API call, concurrent batch, no intermediate storage) flow from this.
+- **The government warning text is fixed.** The canonical FABA warning statement is hardcoded in `lib/validation.ts`. If TTB updates the required text, that constant must be updated manually.
 
 ---
 
 ## Known Limitations
 
-- **Agency network firewalls** may block outbound connections to OpenAI's API endpoints if the app runs locally on agency machines. The deployed Vercel URL routes through Vercel's infrastructure and bypasses this — agents should use the web URL, not a local install. (Same issue encountered in the prior scanning vendor pilot.)
-
-- **Image quality floor**: very low resolution or heavily obscured images return `needs_review` rather than a confident result. Agents should photograph labels under good lighting, flat against a surface if possible.
-
-- **No COLA integration**: this is a standalone prototype. Application data must be entered manually or auto-filled via camera. Integration with the existing COLA (.NET) system is a future consideration pending authorization requirements.
-
-- **No persistent storage**: the app is fully stateless per security guidance. No label images or application data are stored between sessions. Results exist only in the current browser session.
-
-- **Batch manual data entry**: the batch uploader requires filling in application data for each uploaded image. For large importer batches (200–300 labels), a CSV import or COLA integration would be needed — out of scope for this prototype.
-
----
-
-## Trade-offs & Assumptions
-
-| Decision | Rationale |
-|---|---|
-| Single API call per label | Keeps latency under 5 seconds; multi-pass would exceed it |
-| GPT-4o over specialized OCR | General vision model handles layout variation and degraded images better than template-based OCR |
-| Fuzzy match for most fields | Matches real agent judgment (Dave's case); reduces false rejects on formatting differences |
-| Exact match for government warning | Legally mandated text; any deviation is a genuine compliance failure |
-| Stateless / no DB | Simplest secure prototype; no PII retained |
-| Password-protected with shared secret | Appropriate for a small known set of pilot reviewers; not a production auth solution |
-| Vercel deployment | Avoids agency firewall issues; fast global edge network |
+- **Agency network firewalls** may block outbound calls to `api.openai.com` from local machines. The deployed Vercel URL routes around this — agents should use the web URL.
+- **Image quality floor**: severely blurred or occluded labels return `needs_review` on affected fields rather than a confident result. Good lighting and a flat surface improve accuracy significantly.
+- **No COLA integration**: application data must be entered manually or auto-filled via camera. A CSV import or direct COLA API integration is out of scope for this prototype.
+- **No persistent storage**: fully stateless. No images or results are retained between sessions.
+- **Batch data entry overhead**: each image in a batch requires its own application data form. For large importer batches (200–300 labels), a CSV bulk-import flow would be needed.
+- **Rate limiting is in-memory**: the 5-requests-per-hour batch limit resets on server restart and does not coordinate across multiple instances. Sufficient for a prototype; a production system would use a distributed store (Redis, etc.).
 
 ---
 
@@ -126,7 +138,7 @@ If GPT-4o cannot read a field (blur, glare, angle, small print), it returns `"un
 | Language | TypeScript |
 | Styling | Tailwind CSS |
 | Vision AI | OpenAI GPT-4o |
-| Auth | Shared password cookie via Next.js proxy |
+| Auth | Shared password cookie |
 | Deployment | Vercel |
 | Testing | Vitest |
 

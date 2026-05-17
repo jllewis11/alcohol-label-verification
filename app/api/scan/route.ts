@@ -5,8 +5,6 @@ import { VerificationResult } from '@/lib/types';
 
 export const maxDuration = 8;
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
 const SCAN_PROMPT = `You are a TTB alcohol label compliance inspector. Read this label image and check it for TTB compliance.
 
 REQUIRED FIELDS — check each is present and readable:
@@ -66,6 +64,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: `Unsupported image type: ${imageFile.type}` }, { status: 400 });
   }
 
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   const start = Date.now();
   const bytes = await imageFile.arrayBuffer();
   const base64 = Buffer.from(bytes).toString('base64');

@@ -2,9 +2,6 @@ import OpenAI from 'openai';
 import { ApplicationData } from './types';
 import { CANONICAL_GOVERNMENT_WARNING } from './validation';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 const EXTRACT_PROMPT = `Extract alcohol label fields exactly as shown. Return ONLY valid JSON, no markdown.
 
@@ -16,6 +13,8 @@ export async function extractLabel(
   imageBase64: string,
   mimeType: string
 ): Promise<ApplicationData> {
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
   const validMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
   if (!validMimeTypes.includes(mimeType)) {
     throw new Error(`Unsupported image type: ${mimeType}`);
