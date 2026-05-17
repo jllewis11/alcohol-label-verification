@@ -1,9 +1,6 @@
 import OpenAI from 'openai';
 import { ApplicationData, FieldResult, VerificationResult } from './types';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 const SYSTEM_PROMPT = `TTB label compliance check. Read the label image, compare each field to the application data provided.
 
@@ -29,6 +26,7 @@ export async function verifyLabel(
   mimeType: string,
   applicationData: ApplicationData
 ): Promise<VerificationResult> {
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   const start = Date.now();
 
   const validMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
